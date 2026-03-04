@@ -1,222 +1,126 @@
 # GitHub Collaboration Guide for Lab2
 
-This guide provides a structured approach to integrating GitHub collaboration practices into the **Lab2** project (Performance Intelligence).
-
 **Repository**: `https://github.com/DanielPhillipsSanchez/Lab2.git`
 
 ---
 
-## Phase 1: Understanding Git Fundamentals
-
-### What is Git?
-
-Git is a distributed version control system that tracks changes in source code during software development. It enables multiple developers to work on the same codebase simultaneously without overwriting each other's work.
-
-### Core Concepts
+## 1. Git Basics
 
 | Concept | Description |
 |---------|-------------|
-| **Repository** | A directory containing all project files and the complete revision history |
-| **Commit** | A snapshot of changes at a specific point in time with a descriptive message |
-| **Branch** | An independent line of development that isolates work from the main codebase |
-| **Merge** | The process of integrating changes from one branch into another |
-| **Remote** | A shared repository hosted on a server (GitHub) that team members push to and pull from |
+| **Repository** | Project folder with complete version history |
+| **Commit** | Snapshot of changes with a message |
+| **Branch** | Isolated line of development |
+| **Merge** | Integrating changes between branches |
+| **Remote** | Shared repository on GitHub |
 
 ---
 
-## Phase 2: Setting Up Your Environment
-
-### Step 2.1: Fork the Repository
-
-Forking creates your personal copy of the Lab2 repository under your GitHub account.
-
-1. Navigate to `https://github.com/DanielPhillipsSanchez/Lab2`
-2. Click the **Fork** button (top-right corner)
-3. Select your account as the destination
-4. Wait for the fork to complete
-
-### Step 2.2: Clone Your Fork Locally
+## 2. Initial Setup
 
 ```bash
-# Clone your forked repository
+# Fork the repo on GitHub, then clone your fork
 git clone https://github.com/YOUR_USERNAME/Lab2.git
-
-# Navigate into the project directory
 cd Lab2
 
-# Add the original repository as upstream remote
+# Add upstream remote
 git remote add upstream https://github.com/DanielPhillipsSanchez/Lab2.git
-
-# Verify remotes are configured correctly
-git remote -v
-```
-
-Expected output:
-```
-origin    https://github.com/YOUR_USERNAME/Lab2.git (fetch)
-origin    https://github.com/YOUR_USERNAME/Lab2.git (push)
-upstream  https://github.com/DanielPhillipsSanchez/Lab2.git (fetch)
-upstream  https://github.com/DanielPhillipsSanchez/Lab2.git (push)
-```
-
-### Step 2.3: Keep Your Fork Synchronized
-
-```bash
-# Fetch latest changes from upstream
-git fetch upstream
-
-# Switch to your main branch
-git checkout main
-
-# Merge upstream changes into your local main
-git merge upstream/main
-
-# Push updates to your fork
-git push origin main
 ```
 
 ---
 
-## Phase 3: Feature Development Workflow
-
-### Step 3.1: Create a Feature Branch
-
-Always create a new branch for each feature or bug fix. Never work directly on `main`.
+## 3. Development Workflow
 
 ```bash
-# Ensure you're on main and it's up to date
+# 1. Sync with upstream
 git checkout main
 git pull upstream main
 
-# Create and switch to a new feature branch
+# 2. Create feature branch
 git checkout -b feature/your-feature-name
-```
 
-**Branch Naming Conventions:**
+# 3. Make changes, stage, and commit
+git add .
+git commit -m "Add your descriptive message"
 
-| Prefix | Purpose | Example |
-|--------|---------|---------|
-| `feature/` | New functionality | `feature/add-chargeback-metrics` |
-| `bugfix/` | Bug repairs | `bugfix/fix-approval-rate-calc` |
-| `hotfix/` | Urgent production fixes | `hotfix/settlement-null-check` |
-| `docs/` | Documentation updates | `docs/update-api-reference` |
-| `refactor/` | Code restructuring | `refactor/optimize-deposits-query` |
-
-### Step 3.2: Make Your Changes
-
-1. Implement your changes following project conventions
-2. Stage modified files:
-   ```bash
-   # Stage specific files
-   git add packages/dbt/models/marts/your_model.sql
-
-   # Or stage all changes
-   git add .
-   ```
-3. Commit with a clear message:
-   ```bash
-   git commit -m "Add chargeback win rate metric to MARTS layer"
-   ```
-
-**Commit Message Guidelines:**
-
-- Use imperative mood: "Add feature" not "Added feature"
-- Keep the first line under 72 characters
-- Reference issue numbers when applicable: `Fix #42: Resolve settlement amount mismatch`
-- Be specific about what changed and why
-
-### Step 3.3: Push Your Branch
-
-```bash
+# 4. Push to your fork
 git push origin feature/your-feature-name
+
+# 5. Create Pull Request on GitHub
 ```
 
+**Branch Prefixes**: `feature/`, `bugfix/`, `hotfix/`, `docs/`
+
 ---
 
-## Phase 4: Pull Request Process
+## 4. Pull Request Process
 
-### Step 4.1: Create a Pull Request
+1. Push your branch → Click **Compare & pull request** on GitHub
+2. Fill in summary of changes
+3. Address review feedback
+4. After approval → **Squash and merge**
+5. Delete branch after merge
 
-1. Navigate to your fork on GitHub
-2. Click **Compare & pull request** (appears after pushing)
-3. Ensure the base repository is `DanielPhillipsSanchez/Lab2` and base branch is `main`
-4. Fill in the PR template:
+---
 
-```markdown
-## Summary
-Brief description of what this PR accomplishes.
+## 5. Protecting the Main Branch (Step-by-Step)
 
-## Changes Made
-- Added X to handle Y
-- Modified Z to improve performance
-- Updated documentation for A
+### Step 5.1: Access Branch Protection Settings
 
-## Testing
-- [ ] dbt models compile successfully
-- [ ] All tests pass
-- [ ] Manual verification completed
+1. Go to your repository: `https://github.com/DanielPhillipsSanchez/Lab2`
+2. Click **Settings** (top menu, gear icon)
+3. In the left sidebar, click **Branches** (under "Code and automation")
+4. Click **Add branch protection rule** (or **Add rule**)
 
-## Related Issues
-Closes #123
+### Step 5.2: Configure the Rule
+
+1. **Branch name pattern**: Type `main`
+
+2. **Protect matching branches** - Enable these options:
+
+   | Setting | Action |
+   |---------|--------|
+   | **Require a pull request before merging** | Check the box |
+   | → Require approvals | Set to `1` (or more) |
+   | → Dismiss stale pull request approvals | Check the box |
+   | → Require review from Code Owners | Optional |
+   | **Require status checks to pass before merging** | Check the box |
+   | → Require branches to be up to date | Check the box |
+   | **Require conversation resolution before merging** | Check the box |
+   | **Require signed commits** | Optional (for verified commits) |
+   | **Require linear history** | Optional (forces rebase/squash) |
+   | **Do not allow bypassing the above settings** | Check the box |
+
+3. **Rules applied to everyone including administrators** - Enable these:
+
+   | Setting | Action |
+   |---------|--------|
+   | **Allow force pushes** | Leave UNCHECKED |
+   | **Allow deletions** | Leave UNCHECKED |
+
+4. Click **Create** (or **Save changes**)
+
+### Step 5.3: Verify Protection is Active
+
+1. Go back to **Settings → Branches**
+2. You should see `main` listed under "Branch protection rules"
+3. A lock icon appears next to the branch name in the repository
+
+### Step 5.4: Test the Protection
+
+Try pushing directly to main:
+```bash
+git checkout main
+echo "test" >> test.txt
+git add . && git commit -m "Test direct push"
+git push origin main
 ```
 
-### Step 4.2: Respond to Review Feedback
-
-1. Address reviewer comments by making additional commits
-2. Request re-review after changes are complete
-3. Resolve conversations as feedback is addressed
-4. Keep the PR focused on a single objective
-
-### Step 4.3: Merge and Cleanup
-
-After approval:
-
-1. Maintainer merges the PR using **Squash and merge** (preferred)
-2. Delete your feature branch:
-   ```bash
-   # Delete local branch
-   git branch -d feature/your-feature-name
-
-   # Delete remote branch
-   git push origin --delete feature/your-feature-name
-   ```
+Expected result: **Push rejected** with message about protected branch.
 
 ---
 
-## Phase 5: Branch Protection Configuration
-
-### Step 5.1: Enable Branch Protection Rules
-
-Navigate to **Settings → Branches → Add branch protection rule** for the `main` branch.
-
-### Step 5.2: Required Protection Settings
-
-| Setting | Value | Purpose |
-|---------|-------|---------|
-| Branch name pattern | `main` | Protects the main branch |
-| Require pull request before merging | Enabled | Forces code review |
-| Required approvals | 1-2 | Ensures peer review |
-| Dismiss stale approvals | Enabled | Re-review after changes |
-| Require status checks | Enabled | CI must pass |
-| Require up-to-date branches | Enabled | Prevents merge conflicts |
-| Require conversation resolution | Enabled | All comments addressed |
-| Include administrators | Enabled | No bypass for anyone |
-| Allow force pushes | Disabled | Protects commit history |
-| Allow deletions | Disabled | Prevents accidental deletion |
-
-### Step 5.3: Configure Required Status Checks
-
-Add these status checks (if CI/CD is configured):
-
-- `dbt build`
-- `dbt test`
-- `lint`
-
----
-
-## Phase 6: CI/CD Integration
-
-### Step 6.1: Create GitHub Actions Workflow
+## 6. CI/CD Integration (Optional)
 
 Create `.github/workflows/ci.yml`:
 
@@ -224,8 +128,6 @@ Create `.github/workflows/ci.yml`:
 name: CI Pipeline
 
 on:
-  push:
-    branches: [main]
   pull_request:
     branches: [main]
 
@@ -233,166 +135,47 @@ jobs:
   validate:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: Install dbt
-        run: pip install dbt-snowflake
-
-      - name: Compile dbt models
-        run: |
-          cd packages/dbt
-          dbt compile --profiles-dir .
-        env:
-          SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
-          SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
-          SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
-
-      - name: Run dbt tests
-        run: |
-          cd packages/dbt
-          dbt test --profiles-dir .
+      - run: pip install dbt-snowflake
+      - run: cd packages/dbt && dbt compile --profiles-dir .
         env:
           SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
           SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
           SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
 ```
 
-### Step 6.2: Configure Repository Secrets
-
-Navigate to **Settings → Secrets and variables → Actions** and add:
-
-| Secret Name | Description |
-|-------------|-------------|
-| `SNOWFLAKE_ACCOUNT` | Snowflake account identifier |
-| `SNOWFLAKE_USER` | Service account username |
-| `SNOWFLAKE_PASSWORD` | Service account password |
-| `SNOWFLAKE_ROLE` | Role for CI operations |
-| `SNOWFLAKE_WAREHOUSE` | Warehouse for CI jobs |
+Add secrets in **Settings → Secrets and variables → Actions**.
 
 ---
 
-## Phase 7: Code Review Best Practices
-
-### For Authors
-
-1. **Keep PRs small** - Aim for under 400 lines of changes
-2. **Self-review first** - Check your own code before requesting review
-3. **Provide context** - Explain the "why" in your PR description
-4. **Test thoroughly** - Verify all changes work as expected
-5. **Be responsive** - Address feedback promptly
-
-### For Reviewers
-
-1. **Be constructive** - Focus on improvement, not criticism
-2. **Ask questions** - Clarify intent before suggesting changes
-3. **Prioritize feedback** - Distinguish blocking issues from suggestions
-4. **Acknowledge good work** - Recognize well-written code
-5. **Review promptly** - Respond within 24-48 hours
-
-### Review Checklist
-
-- [ ] Code follows project conventions and style
-- [ ] SQL queries are optimized and follow Snowflake best practices
-- [ ] dbt models include appropriate tests and documentation
-- [ ] No sensitive data (credentials, PII) is exposed
-- [ ] Changes are backward compatible
-- [ ] Error handling is appropriate
-
----
-
-## Phase 8: Troubleshooting Common Issues
-
-### Merge Conflicts
-
-```bash
-# Fetch latest changes
-git fetch upstream
-
-# Rebase your branch on main
-git rebase upstream/main
-
-# Resolve conflicts in your editor, then continue
-git add .
-git rebase --continue
-
-# Force push to update your PR
-git push origin feature/your-feature-name --force-with-lease
-```
-
-### Undoing Changes
-
-```bash
-# Discard uncommitted changes to a file
-git checkout -- path/to/file
-
-# Undo the last commit (keep changes staged)
-git reset --soft HEAD~1
-
-# Undo the last commit (discard changes)
-git reset --hard HEAD~1
-```
-
-### Syncing a Stale Fork
-
-```bash
-git fetch upstream
-git checkout main
-git reset --hard upstream/main
-git push origin main --force
-```
-
----
-
-## Quick Reference Card
+## 7. Quick Reference
 
 | Task | Command |
 |------|---------|
 | Create branch | `git checkout -b feature/name` |
-| Stage changes | `git add .` |
-| Commit | `git commit -m "message"` |
+| Stage & commit | `git add . && git commit -m "msg"` |
 | Push branch | `git push origin feature/name` |
-| Sync with upstream | `git fetch upstream && git merge upstream/main` |
-| Delete local branch | `git branch -d feature/name` |
-| Delete remote branch | `git push origin --delete feature/name` |
-| View branch status | `git status` |
-| View commit history | `git log --oneline -10` |
+| Sync fork | `git fetch upstream && git merge upstream/main` |
+| Delete branch | `git branch -d feature/name` |
 
 ---
 
-## Project-Specific Notes
+## 8. Troubleshooting
 
-### Lab2 Directory Structure
-
-```
-Lab2/
-├── packages/
-│   ├── database/         # SQL deployment scripts
-│   │   └── utilities/    # Agent and semantic view definitions
-│   └── dbt/              # dbt transformation project
-│       ├── models/
-│       │   ├── staging/      # Views over RAW data
-│       │   ├── intermediate/ # Enriched dynamic tables
-│       │   └── marts/        # Business-ready tables
-│       └── analyses/         # Semantic view DDL
-├── apps/                 # Application code
-├── AGENTS.md             # Project context for AI agents
-└── setup.sql             # Initial database setup
+**Merge conflicts:**
+```bash
+git fetch upstream
+git rebase upstream/main
+# Resolve conflicts, then:
+git add . && git rebase --continue
+git push origin feature/name --force-with-lease
 ```
 
-### Key Files to Review Before Contributing
-
-1. `AGENTS.md` - Project architecture and business rules
-2. `packages/dbt/dbt_project.yml` - dbt configuration
-3. `packages/dbt/models/` - Existing model patterns
-
----
-
-## Contact and Support
-
-For questions or issues with the collaboration process, create an issue in the repository or contact the project maintainer.
+**Undo last commit:**
+```bash
+git reset --soft HEAD~1   # Keep changes
+git reset --hard HEAD~1   # Discard changes
+```
