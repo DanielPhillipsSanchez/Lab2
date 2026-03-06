@@ -219,10 +219,83 @@ jobs:
 | View audit log | Settings → Security → Audit log |
 | Manage webhooks | Settings → Webhooks |
 | Configure Pages | Settings → Pages |
+| Set up Jira MCP | See Section 8 below |
 
 ---
 
-## 8. Troubleshooting
+## 8. Setting Up Jira MCP Integration
+
+Connect Jira to your development environment via MCP (Model Context Protocol) to manage tickets directly from your CLI/agent.
+
+### Step 8.1: Generate a Jira API Token
+
+1. Go to [Atlassian API Tokens](https://id.atlassian.com/manage-profile/security/api-tokens)
+2. Click **Create API token**
+3. Give it a label (e.g., `Cortex Code MCP`)
+4. Copy the token — you won't see it again
+
+### Step 8.2: Configure the Jira MCP Connection
+
+Provide your credentials to the MCP Jira tool:
+
+| Parameter | Value |
+|-----------|-------|
+| **Base URL** | `https://evolvconsulting-team-u2rm5pfv.atlassian.net/` |
+| **Email** | Your Atlassian account email |
+| **API Token** | The token generated in Step 8.1 |
+| **Auth Method** | Basic Auth |
+
+In Cortex Code, the connection is set via `jira_set_auth`:
+
+```
+Base URL:  https://evolvconsulting-team-u2rm5pfv.atlassian.net/
+Email:     your.email@evolvconsulting.com
+API Token: <your-api-token>
+```
+
+### Step 8.3: Verify the Connection
+
+Run these commands to confirm the integration is working:
+
+1. **Check auth status** — `jira_auth_status` to verify credentials are loaded
+2. **Check identity** — `jira_whoami` to confirm the authenticated user
+3. **List projects** — `jira_list_projects` to verify project access
+4. **View your tickets** — `jira_get_my_open_issues` to see assigned issues
+
+### Step 8.4: Common Jira MCP Operations
+
+Once connected, you can perform these operations directly from your agent:
+
+| Operation | MCP Tool | Example |
+|-----------|----------|---------|
+| View your open tickets | `jira_get_my_open_issues` | "Show my Jira tickets" |
+| Get issue details | `jira_get_issue` | "Tell me about LAB2-17" |
+| Search issues (JQL) | `jira_search_issues` | "Find all STAGING tickets" |
+| Transition an issue | `jira_transition_issue` | "Move LAB2-17 to In Progress" |
+| Add a comment | `jira_add_comment` | "Add a comment to LAB2-17" |
+| Create an issue | `jira_create_issue` | "Create a bug in LAB2" |
+| Update an issue | `jira_update_issue` | "Assign LAB2-17 to me" |
+
+### Step 8.5: Project Board Overview
+
+Our Jira project **LAB2** maps to the medallion data architecture:
+
+| Layer | Tickets | Description |
+|-------|---------|-------------|
+| STAGING | LAB2-16 to LAB2-22 | Staging models (stg_clx_*) |
+| INTERMEDIATE | LAB2-23 to LAB2-28 | Enriched dynamic tables (int_*__enriched) |
+| MARTS | LAB2-29 to LAB2-35 | Business-ready analytics tables |
+
+### Step 8.6: Security Notes
+
+- **Never commit API tokens** to the repository
+- API tokens are session-scoped — re-authenticate when starting a new session
+- Use environment variables or secret managers for CI/CD Jira integrations
+- Rotate tokens periodically via the Atlassian account settings
+
+---
+
+## 9. Troubleshooting
 
 **Collaborator can't push:**
 - Verify they have Write access or higher
