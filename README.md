@@ -148,6 +148,31 @@ git clone <repo-url>
 cd coco_sdlc_hol
 ```
 
+### 8. Atlassian API Token (Jira & Confluence)
+
+The lab integrates with Jira for issue tracking and Confluence for documentation. You need a **read-only** Atlassian API token.
+
+**Generate a token:**
+
+1. Go to https://id.atlassian.com/manage-profile/security/api-tokens
+2. Click **Create API token**
+3. Give it a label (e.g., `COCO HOL Read-Only`)
+4. Copy the token — you will paste it into `.env.local` later
+
+**Required scopes (read-only):**
+
+| Product | Scopes |
+|---------|--------|
+| Jira | `read:jira-work`, `read:jira-user` |
+| Confluence | `read:confluence-content.all`, `read:confluence-space.summary` |
+
+> **Note:** Atlassian API tokens created at the link above inherit the permissions of your Atlassian account. For this lab, the integration only performs read operations (fetching issues, searching content). Do not grant write access unless explicitly needed.
+
+You will also need:
+- Your **Atlassian domain** (e.g., `mycompany.atlassian.net`)
+- Your **Jira project key** (e.g., `COCO`, `PI`, `HOL`)
+- Your **Confluence space key** (e.g., `COCO`, `HOL`)
+
 ---
 
 ## HOL Setup Script
@@ -220,10 +245,17 @@ cd apps/frontend
 cp .env.example .env.local
 ```
 
-Open `.env.local` and set your Snowflake account identifier — it's the only field that needs to be filled in:
+Open `.env.local` and set your Snowflake account identifier and Atlassian credentials:
 
 ```
 SNOWFLAKE_ACCOUNT=<orgname>-<accountname>
+
+# Atlassian (read-only)
+ATLASSIAN_DOMAIN=<your-domain>.atlassian.net
+ATLASSIAN_EMAIL=<your-atlassian-email>
+ATLASSIAN_API_TOKEN=<your-read-only-api-token>
+JIRA_PROJECT_KEY=<your-jira-project-key>
+CONFLUENCE_SPACE_KEY=<your-confluence-space-key>
 ```
 
 Everything else is pre-configured: the app connects as `COCO_SDLC_HOL_SERVICE_USER` using the RSA key pair that `hol_setup.sql` provisioned.
